@@ -1,0 +1,173 @@
+/**
+ * Evolvcode CMS - Forms Styles
+ */
+
+/* Container */
+.evolv-form-container {
+    font-family: inherit;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.evolv-form-title {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 24px;
+    color: #333;
+}
+
+.evolv-form-description {
+    color: #666;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+/* Fields */
+.evolv-field-group {
+    margin-bottom: 20px;
+}
+
+.evolv-field-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+}
+
+.evolv-field-label .required {
+    color: #e53935;
+    margin-left: 4px;
+}
+
+.evolv-field-input,
+.evolv-field-select,
+.evolv-field-textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border-color 0.2s;
+}
+
+.evolv-field-input:focus,
+.evolv-field-select:focus,
+.evolv-field-textarea:focus {
+    border-color: #000;
+    outline: none;
+}
+
+.evolv-field-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.evolv-field-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+/* Submit Button */
+.evolv-form-submit {
+    background: #000;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 100%;
+}
+
+.evolv-form-submit:hover {
+    background: #333;
+}
+
+.evolv-form-submit:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* Response */
+.evolv-form-response {
+    margin-bottom: 16px;
+    padding: 12px;
+    border-radius: 6px;
+    display: none;
+}
+
+.evolv-form-response.success {
+    display: block;
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.evolv-form-response.error {
+    display: block;
+    background: #ffebee;
+    color: #c62828;
+}
+
+/* Popup Overlay */
+.evolv-form-popup-wrapper {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.evolv-form-popup-wrapper.active {
+    display: flex;
+    animation: fadeIn 0.3s ease;
+}
+
+.evolv-form-popup .evolv-form-container {
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s ease;
+}
+
+.evolv-form-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #999;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    padding: 0;
+    z-index: 2;
+}
+
+.evolv-form-close:hover {
+    color: #333;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
