@@ -5,7 +5,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize all modules
-    initPreloader();
+    // initPreloader();
     initHeader();
     initMobileMenu();
     initBackToTop();
@@ -228,30 +228,6 @@ function initDynamicForms() {
             }
         });
     });
-}
-function initPreloader() {
-    const preloader = document.getElementById('preloader');
-    if (!preloader) return;
-    
-    window.addEventListener('load', () => {
-        gsap.to(preloader, {
-            opacity: 0,
-            duration: 0.5,
-            onComplete: () => {
-                preloader.classList.add('hidden');
-                // Start page animations after preloader
-                animatePageLoad();
-            }
-        });
-    });
-    
-    // Fallback - hide preloader after 3 seconds
-    setTimeout(() => {
-        if (!preloader.classList.contains('hidden')) {
-            preloader.classList.add('hidden');
-            animatePageLoad();
-        }
-    }, 3000);
 }
 
 /**

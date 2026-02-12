@@ -16,6 +16,7 @@ $routes = [
     '/portfolio' => 'portfolio.php',
     '/blog' => 'blog.php',
     '/contact' => 'contact.php',
+    '/career' => 'career.php',
     '/sitemap' => 'sitemap.php',
 ];
 

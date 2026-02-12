@@ -84,12 +84,7 @@ Security::setSecurityHeaders();
     <?php endif; ?>
 </head>
 <body class="<?= e($bodyClass) ?>">
-    <!-- Preloader -->
-    <div class="preloader" id="preloader">
-        <div class="preloader-inner">
-            <div class="preloader-logo">EVOLVCODE</div>
-        </div>
-    </div>
+
     
     <!-- Header -->
     <header class="site-header" id="header">
