@@ -66,6 +66,7 @@ if (Security::isPost()) {
                     'status' => 'active'
                 ]);
                 $message = 'Menu item added.';
+                $success = true;
             } else {
                 $error = 'Title and URL are required.';
             }
@@ -75,8 +76,35 @@ if (Security::isPost()) {
             $error = 'Invalid token.';
         } else {
             $itemId = (int) $_POST['item_id'];
-            $db->delete('menu_items', 'id = ?', [$itemId]);
-            $message = 'Menu item deleted.';
+            
+            // Recursive delete function (Move to top or define here)
+            // Using a lambda or just logic here since it's simple
+            // But PHP functions inside if blocks are tricky if not careful
+            // Better to fetch all descendants first then delete
+            
+            // Get all descendants
+            $idsToDelete = [$itemId];
+            $toProcess = [$itemId];
+            
+            while (!empty($toProcess)) {
+                $currentId = array_shift($toProcess);
+                $children = $db->fetchAll("SELECT id FROM menu_items WHERE parent_id = ?", [$currentId]);
+                foreach ($children as $child) {
+                    $toProcess[] = $child['id'];
+                    $idsToDelete[] = $child['id'];
+                }
+            }
+            
+            // Delete all (children first to avoid constraints if any)
+            // If using IN clause, MySQL usually handles it but to be safe reverse
+            if (!empty($idsToDelete)) {
+                $idsToDelete = array_reverse($idsToDelete);
+                $placeholders = implode(',', array_fill(0, count($idsToDelete), '?'));
+                $db->query("DELETE FROM menu_items WHERE id IN ($placeholders)", $idsToDelete);
+            }
+            
+            $message = 'Menu item deleted successfully.';
+            $success = true; // Flag for SweetAlert
         }
     } elseif (isset($_POST['edit_item'])) {
          if (!Security::validateCSRFToken($token)) {
@@ -100,6 +128,7 @@ if (Security::isPost()) {
                 'target' => $target
             ], 'id = ?', [$itemId]);
             $message = 'Menu item updated.';
+            $success = true;
         }
     }
 }
@@ -141,7 +170,7 @@ unset($item);
     </div>
 </div>
 
-<?php if ($message): ?>
+<?php if ($message && !isset($success)): ?>
 <div class="alert alert-success"><i class="fas fa-check-circle"></i> <?= e($message) ?></div>
 <?php endif; ?>
 
@@ -177,7 +206,7 @@ unset($item);
                                 data-item='<?= htmlspecialchars(json_encode($item), ENT_QUOTES, 'UTF-8') ?>'>
                             <i class="fas fa-edit"></i>
                         </button>
-                        <form method="POST" action="" onsubmit="return confirm('Delete this item?');" style="display: inline;">
+                        <form method="POST" action="" onsubmit="return confirmDelete(event, this);" style="display: inline;">
                             <?= Security::csrfField() ?>
                             <input type="hidden" name="delete_item" value="1">
                             <input type="hidden" name="item_id" value="<?= $item['id'] ?>">
@@ -206,7 +235,7 @@ unset($item);
                                     data-item='<?= htmlspecialchars(json_encode($child), ENT_QUOTES, 'UTF-8') ?>'>
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <form method="POST" action="" onsubmit="return confirm('Delete this item?');" style="display: inline;">
+                            <form method="POST" action="" onsubmit="return confirmDelete(event, this);" style="display: inline;">
                                 <?= Security::csrfField() ?>
                                 <input type="hidden" name="delete_item" value="1">
                                 <input type="hidden" name="item_id" value="<?= $child['id'] ?>">
@@ -508,6 +537,42 @@ function resetForm() {
     
     document.getElementById('cancel-btn').style.display = 'none';
 }
+
+function confirmDelete(e, form) {
+    e.preventDefault();
+    
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.submit();
+        }
+    });
+    return false;
+}
 </script>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<?php if (isset($success) && $success): ?>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    Swal.fire({
+        icon: 'success',
+        title: 'Deleted!',
+        text: '<?= addslashes($message) ?>',
+        timer: 2000,
+        showConfirmButton: false
+    });
+});
+</script>
+<?php endif; ?>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
