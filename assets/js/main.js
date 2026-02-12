@@ -683,6 +683,9 @@ function initDynamicForms() {
             
             try {
                 const formData = new FormData(form);
+                
+                // Send the current page title for source tracking
+                formData.append('source_page', document.title);
                 const response = await fetch(form.action, {
                     method: 'POST',
                     body: formData

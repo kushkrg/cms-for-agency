@@ -106,6 +106,7 @@ try {
         'ip_address' => $ip,
         'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
         'referrer' => $_SERVER['HTTP_REFERER'] ?? '',
+        'source_page' => Security::clean($input['source_page'] ?? ''),
         'status' => 'unread'
     ]);
     

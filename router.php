@@ -109,6 +109,14 @@ if (preg_match('#^/(assets|uploads)/#', $uri)) {
     return false;
 }
 
+// Dynamic pages from DB (e.g., /thank-you, /career, etc.)
+$slug = ltrim($uri, '/');
+if ($slug && !str_contains($slug, '/')) {
+    $_GET['slug'] = $slug;
+    include __DIR__ . '/page.php';
+    return true;
+}
+
 // If nothing matched, show 404
 http_response_code(404);
 include __DIR__ . '/404.php';

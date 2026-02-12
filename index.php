@@ -41,8 +41,23 @@ if (preg_match('#^/(?:post|blog)/([a-zA-Z0-9-]+)/?$#', $uri, $matches)) {
     require_once __DIR__ . '/post.php';
     exit;
 }
-
-// If uri is not home and not index.php, it's a 404
+// Dynamic pages from DB (e.g., /thank-you, /career, etc.)
+$slug = ltrim($uri, '/');
+if ($slug && !str_contains($slug, '/') && $uri !== '/index.php' && $slug !== 'index.php') {
+    $_GET['slug'] = $slug;
+    
+    // Check if page exists in DB before concluding it's a 404
+    // We need to fetch it to be sure, or just let page.php handle it
+    // But since page.php includes header/footer, we should only include it if it's a page
+    // Using a quick check here
+    $db = Database::getInstance();
+    $pageExists = $db->fetchOne("SELECT id FROM pages WHERE slug = ? AND status = 'published'", [$slug]);
+    
+    if ($pageExists) {
+        require_once __DIR__ . '/page.php';
+        exit;
+    }
+}
 if ($uri !== '/' && $uri !== '/index.php' && !file_exists(__DIR__ . $uri)) {
     http_response_code(404);
     require_once __DIR__ . '/404.php';

@@ -91,7 +91,7 @@ require_once INCLUDES_PATH . '/header.php';
             <!-- Sidebar -->
             <aside class="slide-right">
                 <!-- Project Details -->
-                <div style="background: var(--color-gray-50); padding: var(--space-6); border-radius: var(--radius-xl); position: sticky; top: 100px;">
+                <div style="background: var(--color-gray-50); padding: var(--space-6); border-radius: var(--radius-xl);">
                     <h4 style="margin-bottom: var(--space-4);">Project Details</h4>
                     
                     <dl style="display: flex; flex-direction: column; gap: var(--space-4);">

@@ -98,6 +98,7 @@ try {
         'ip_address' => $_SERVER['REMOTE_ADDR'] ?? '',
         'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
         'referrer' => $_SERVER['HTTP_REFERER'] ?? '',
+        'source_page' => Security::clean($_POST['source_page'] ?? ''),
         'status' => 'unread'
     ];
     

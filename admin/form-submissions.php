@@ -29,19 +29,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         switch ($action) {
             case 'mark_read':
-                $db->update('form_submissions', ['status' => 'read'], ['id' => $id]);
+                $db->update('form_submissions', ['status' => 'read'], 'id = ?', [$id]);
                 $success = 'Marked as read.';
                 break;
+            case 'mark_unread':
+                $db->update('form_submissions', ['status' => 'unread'], 'id = ?', [$id]);
+                $success = 'Marked as unread.';
+                break;
             case 'mark_replied':
-                $db->update('form_submissions', ['status' => 'replied'], ['id' => $id]);
+                $db->update('form_submissions', ['status' => 'replied'], 'id = ?', [$id]);
                 $success = 'Marked as replied.';
                 break;
             case 'archive':
-                $db->update('form_submissions', ['status' => 'archived'], ['id' => $id]);
+                $db->update('form_submissions', ['status' => 'archived'], 'id = ?', [$id]);
                 $success = 'Archived.';
                 break;
             case 'delete':
-                $db->delete('form_submissions', ['id' => $id]);
+                $db->delete('form_submissions', 'id = ?', [$id]);
                 $success = 'Deleted.';
                 break;
             case 'bulk_delete':
@@ -150,6 +154,7 @@ require_once __DIR__ . '/includes/header.php';
                         <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
                     </th>
                     <th>Form</th>
+                    <th>Source Page</th>
                     <th>Contact Info</th>
                     <th>Message</th>
                     <th>Date</th>
@@ -160,7 +165,7 @@ require_once __DIR__ . '/includes/header.php';
             <tbody>
                 <?php if (empty($submissions)): ?>
                 <tr>
-                    <td colspan="7" class="text-center">No submissions found.</td>
+                    <td colspan="8" class="text-center">No submissions found.</td>
                 </tr>
                 <?php else: ?>
                 <?php foreach ($submissions as $sub): ?>
@@ -171,6 +176,13 @@ require_once __DIR__ . '/includes/header.php';
                     </td>
                     <td>
                         <span class="form-badge"><?= e($sub['form_name'] ?? 'Unknown') ?></span>
+                    </td>
+                    <td>
+                        <?php if (!empty($sub['source_page'])): ?>
+                        <small style="color: var(--color-gray-600);" title="<?= e($sub['source_page']) ?>"><?= e($sub['source_page']) ?></small>
+                        <?php else: ?>
+                        <small style="color: var(--color-gray-400);">—</small>
+                        <?php endif; ?>
                     </td>
                     <td>
                         <strong><?= e($data['name'] ?? 'N/A') ?></strong><br>
@@ -204,10 +216,14 @@ require_once __DIR__ . '/includes/header.php';
                                     <i class="fas fa-ellipsis-v"></i>
                                 </button>
                                 <div class="dropdown-menu">
-                                    <button type="button" onclick="quickAction(<?= $sub['id'] ?>, 'mark_read')">Mark as Read</button>
-                                    <button type="button" onclick="quickAction(<?= $sub['id'] ?>, 'mark_replied')">Mark as Replied</button>
-                                    <button type="button" onclick="quickAction(<?= $sub['id'] ?>, 'archive')">Archive</button>
-                                    <button type="button" onclick="quickAction(<?= $sub['id'] ?>, 'delete')" class="text-danger">Delete</button>
+                                    <?php if ($sub['status'] === 'unread'): ?>
+                                    <button type="button" onclick="event.stopPropagation(); quickAction(<?= $sub['id'] ?>, 'mark_read')"><i class="fas fa-envelope-open"></i> Mark as Read</button>
+                                    <?php else: ?>
+                                    <button type="button" onclick="event.stopPropagation(); quickAction(<?= $sub['id'] ?>, 'mark_unread')"><i class="fas fa-envelope"></i> Mark as Unread</button>
+                                    <?php endif; ?>
+                                    <button type="button" onclick="event.stopPropagation(); quickAction(<?= $sub['id'] ?>, 'mark_replied')"><i class="fas fa-reply"></i> Mark as Replied</button>
+                                    <button type="button" onclick="event.stopPropagation(); quickAction(<?= $sub['id'] ?>, 'archive')"><i class="fas fa-archive"></i> Archive</button>
+                                    <button type="button" onclick="event.stopPropagation(); quickAction(<?= $sub['id'] ?>, 'delete')" class="text-danger"><i class="fas fa-trash"></i> Delete</button>
                                 </div>
                             </div>
                         </div>
@@ -280,36 +296,69 @@ require_once __DIR__ . '/includes/header.php';
 .status-read { background: #d1ecf1; color: #0c5460; }
 .status-replied { background: #d4edda; color: #155724; }
 .status-archived { background: #e2e3e5; color: #383d41; }
-.dropdown {
+.action-buttons .dropdown {
     position: relative;
     display: inline-block;
 }
-.dropdown-menu {
+.action-buttons .dropdown .dropdown-toggle {
+    padding: 6px 10px;
+    background: var(--color-gray-100, #f5f5f5);
+    border: 1px solid var(--color-gray-200, #eee);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--color-gray-700, #616161);
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.action-buttons .dropdown .dropdown-toggle:hover {
+    background: var(--color-gray-200, #eee);
+}
+.action-buttons .dropdown .dropdown-menu {
     display: none;
     position: absolute;
     right: 0;
-    top: 100%;
+    top: calc(100% + 4px);
     background: white;
     border: 1px solid #ddd;
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    z-index: 100;
-    min-width: 150px;
+    border-radius: 8px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    z-index: 1000;
+    min-width: 170px;
+    /* Override global admin.css styles */
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    margin-top: 0;
+    padding: 4px 0;
 }
-.dropdown:hover .dropdown-menu {
+.action-buttons .dropdown .dropdown-menu.show {
     display: block;
 }
-.dropdown-menu button {
-    display: block;
+.action-buttons .dropdown .dropdown-menu button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     width: 100%;
     padding: 10px 15px;
     border: none;
     background: none;
     text-align: left;
     cursor: pointer;
+    font-size: 13px;
+    color: #333;
+    transition: background 0.15s ease;
 }
-.dropdown-menu button:hover {
+.action-buttons .dropdown .dropdown-menu button:hover {
     background: #f5f5f5;
+}
+.action-buttons .dropdown .dropdown-menu button i {
+    width: 16px;
+    text-align: center;
+    font-size: 12px;
+    color: #666;
 }
 .text-danger { color: #dc3545; }
 .modal {
@@ -429,13 +478,59 @@ function closeModal() {
 }
 
 function quickAction(id, action) {
-    if (action === 'delete' && !confirm('Delete this submission?')) return;
-    document.getElementById('actionId').value = id;
-    document.getElementById('actionType').value = action;
-    document.getElementById('actionForm').submit();
+    // Close dropdown immediately
+    closeAllDropdowns();
+    
+    if (action === 'delete') {
+        if (!confirm('Delete this submission?')) return;
+    }
+    
+    // Use setTimeout to decouple form submission from the click event
+    // This prevents any interference with the parent bulkForm
+    setTimeout(function() {
+        document.getElementById('actionId').value = id;
+        document.getElementById('actionType').value = action;
+        document.getElementById('actionForm').submit();
+    }, 0);
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+// Close all open dropdowns
+function closeAllDropdowns() {
+    document.querySelectorAll('.action-buttons .dropdown-menu.show').forEach(menu => {
+        menu.classList.remove('show');
+    });
+}
+
+// Toggle dropdown on click
+document.addEventListener('click', function(e) {
+    const toggleBtn = e.target.closest('.action-buttons .dropdown .dropdown-toggle');
+    
+    if (toggleBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        const menu = toggleBtn.nextElementSibling;
+        const isOpen = menu.classList.contains('show');
+        
+        // Close all other dropdowns first
+        closeAllDropdowns();
+        
+        // Toggle this one
+        if (!isOpen) {
+            menu.classList.add('show');
+        }
+        return;
+    }
+    
+    // Click anywhere else — close all dropdowns
+    closeAllDropdowns();
+});
+
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+        closeModal();
+        closeAllDropdowns();
+    }
+});
 </script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
