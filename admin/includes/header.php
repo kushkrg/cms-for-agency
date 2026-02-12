@@ -161,6 +161,15 @@ $currentAdmin = Auth::getCurrentAdmin();
                 </li>
                 <?php endif; ?>
                 
+                <?php if (Auth::hasPermission('contacts')): ?>
+                <li class="nav-item">
+                    <a href="<?= e(ADMIN_URL) ?>/subscribers.php" class="nav-link <?= $currentPage === 'subscribers' ? 'active' : '' ?>">
+                        <i class="fas fa-users"></i>
+                        <span>Subscribers</span>
+                    </a>
+                </li>
+                <?php endif; ?>
+                
                 <?php if (Auth::hasPermission('media')): ?>
                 <li class="nav-item">
                     <a href="<?= e(ADMIN_URL) ?>/media.php" class="nav-link <?= $currentPage === 'media' ? 'active' : '' ?>">

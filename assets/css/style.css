@@ -2173,3 +2173,243 @@ textarea.form-control {
         margin-bottom: var(--space-8);
     }
 }
+
+/* Footer Redesign & Newsletter – Black & White Theme */
+.site-footer {
+    background: #000;
+    color: #ffffff;
+    padding: 0;
+    position: relative;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Newsletter Bar */
+.footer-newsletter-bar {
+    background: #111;
+    padding: 50px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.newsletter-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.newsletter-text h3 {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+.newsletter-text h3 span {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 400;
+    letter-spacing: 3px;
+    opacity: 0.5;
+    margin-bottom: 4px;
+}
+
+.newsletter-form-wrap {
+    flex: 1;
+    max-width: 550px;
+}
+
+.newsletter-form {
+    display: flex;
+    position: relative;
+}
+
+.newsletter-input {
+    width: 100%;
+    padding: 16px 150px 16px 25px;
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.newsletter-input::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+}
+
+.newsletter-input:focus {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.newsletter-btn {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    bottom: 5px;
+    background: #fff;
+    color: #000;
+    border: none;
+    border-radius: 50px;
+    padding: 0 30px;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.newsletter-btn:hover {
+    background: #e0e0e0;
+    transform: scale(1.02);
+}
+
+/* Newsletter Message */
+.newsletter-msg {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    padding: 0;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    min-height: 0;
+}
+
+.newsletter-msg.success {
+    color: #a3e635;
+    padding: 8px 16px;
+    background: rgba(163, 230, 53, 0.08);
+    border: 1px solid rgba(163, 230, 53, 0.15);
+}
+
+.newsletter-msg.error {
+    color: #fca5a5;
+    padding: 8px 16px;
+    background: rgba(252, 165, 165, 0.08);
+    border: 1px solid rgba(252, 165, 165, 0.15);
+}
+
+/* Main Footer Content */
+.footer-main {
+    padding: 70px 0 50px;
+}
+
+.footer-grid-new {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+}
+
+.footer-col-new h4 {
+    color: #fff;
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+    font-weight: 600;
+    position: relative;
+    padding-bottom: 12px;
+}
+
+.footer-col-new h4::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 30px;
+    height: 2px;
+    background: #fff;
+    border-radius: 2px;
+}
+
+.footer-links-new {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links-new li {
+    margin-bottom: 12px;
+}
+
+.footer-links-new a {
+    color: rgba(255, 255, 255, 0.5);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.footer-links-new a:hover {
+    color: #fff;
+    padding-left: 5px;
+}
+
+.footer-links-new a::before {
+    content: '\f054';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    margin-right: 10px;
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.footer-links-new a:hover::before {
+    color: #fff;
+}
+
+/* Bottom Bar */
+.footer-bottom-new {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 20px 0;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.copyright-text {
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+.copyright-text a {
+    color: rgba(255, 255, 255, 0.5);
+    text-decoration: none;
+}
+
+.copyright-text a:hover {
+    color: #fff;
+}
+
+.copyright-text i {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+    .footer-grid-new {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .newsletter-content {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .newsletter-form-wrap {
+        max-width: 100%;
+    }
+    .footer-grid-new {
+        grid-template-columns: 1fr;
+    }
+    .footer-bottom-new {
+        text-align: center;
+    }
+}
+

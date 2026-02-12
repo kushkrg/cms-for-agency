@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initLazyLoading();
     initPortfolioFilters();
     initCareerForm();
+    initNewsletterForm();
 });
 
 /**
@@ -802,23 +803,75 @@ function initLazyLoading() {
                 if (entry.isIntersecting) {
                     const img = entry.target;
                     img.src = img.dataset.src;
-                    img.removeAttribute('data-src');
-                    img.classList.add('loaded');
-                    observer.unobserve(img);
+                    img.classList.remove('lazy');
+                    imageObserver.unobserve(img);
                 }
             });
-        }, {
-            rootMargin: '50px 0px'
         });
         
-        lazyImages.forEach(img => imageObserver.observe(img));
+        lazyImages.forEach(img => {
+            imageObserver.observe(img);
+        });
     } else {
-        // Fallback for older browsers
+        // Fallback
         lazyImages.forEach(img => {
             img.src = img.dataset.src;
-            img.removeAttribute('data-src');
         });
     }
+}
+
+/**
+ * Newsletter Form Handling
+ */
+function initNewsletterForm() {
+    const form = document.getElementById('newsletter-form');
+    if (!form) return;
+
+    const msgEl = document.getElementById('newsletter-msg');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const btn = form.querySelector('button');
+        const originalText = btn.innerHTML;
+        
+        btn.disabled = true;
+        btn.innerHTML = 'Subscribing...';
+        if (msgEl) { msgEl.textContent = ''; msgEl.className = 'newsletter-msg'; }
+        
+        try {
+            const formData = new FormData(form);
+            const response = await fetch('/ajax/subscribe.php', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                if (msgEl) {
+                    msgEl.textContent = result.message || 'Thank you for subscribing!';
+                    msgEl.className = 'newsletter-msg success';
+                }
+                form.reset();
+                setTimeout(() => { if (msgEl) { msgEl.textContent = ''; msgEl.className = 'newsletter-msg'; } }, 5000);
+            } else {
+                if (msgEl) {
+                    msgEl.textContent = result.message || 'Something went wrong.';
+                    msgEl.className = 'newsletter-msg error';
+                }
+            }
+        } catch (error) {
+            console.error('Newsletter error:', error);
+            if (msgEl) {
+                msgEl.textContent = 'An error occurred. Please try again.';
+                msgEl.className = 'newsletter-msg error';
+            }
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    });
 }
 
 /**
