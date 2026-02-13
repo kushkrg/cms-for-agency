@@ -157,8 +157,12 @@
     <script src="<?= e(ASSETS_URL) ?>/js/main.js?v=<?= time() ?>" defer></script>
     
     <!-- Custom JS (Body) -->
-    <?php if ($customJsBody = getSetting('custom_js_body')): ?>
+    <?php if (isset($customJsBody) && $customJsBody): ?>
     <?= $customJsBody ?>
+    <?php endif; ?>
+
+    <?php if ($customJsBodyGlobal = getSetting('custom_js_body')): ?>
+    <?= $customJsBodyGlobal ?>
     <?php endif; ?>
 </body>
 </html>

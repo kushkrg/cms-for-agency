@@ -18,6 +18,8 @@ $routes = [
     '/contact' => 'contact.php',
     '/career' => 'career.php',
     '/sitemap' => 'sitemap.php',
+    '/faq' => 'faq.php',
+    '/faq/' => 'faq.php',
 ];
 
 // Exact route match
@@ -192,7 +194,7 @@ require_once INCLUDES_PATH . '/header.php';
                     </li>
                 </ul>
                 
-                <div style="margin-top: var(--space-8);">
+                <div style="margin-top: var(--space-20);">
                     <a href="<?= e(SITE_URL) ?>/contact" class="btn btn-primary">Start Your Project</a>
                 </div>
             </div>

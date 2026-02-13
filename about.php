@@ -42,7 +42,7 @@ require_once INCLUDES_PATH . '/header.php';
                     Our mission is simple: to help businesses of all sizes establish a strong online presence and achieve 
                     measurable growth through smart digital strategies.
                 </p>
-                <a href="https://api.whatsapp.com/send/?phone=<?= e(getSetting('whatsapp_number', '919229045881')) ?>" 
+                <a style="margin-top: var(--space-12);" href="https://api.whatsapp.com/send/?phone=<?= e(getSetting('whatsapp_number', '919229045881')) ?>" 
                    class="btn btn-primary" target="_blank" rel="noopener">
                     Get Free Consultation
                 </a>

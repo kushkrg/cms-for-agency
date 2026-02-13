@@ -24,6 +24,7 @@ $pageTitle = $pageData['meta_title'] ?: $pageData['title'];
 $pageDescription = $pageData['meta_description'] ?? '';
 $pageKeywords = $pageData['meta_keywords'] ?? '';
 $bodyClass = 'page-' . $pageData['slug'];
+$customJsBody = $pageData['custom_script'] ?? '';
 
 require_once INCLUDES_PATH . '/header.php';
 ?>

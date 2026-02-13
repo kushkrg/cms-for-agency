@@ -10,6 +10,28 @@
 
 $uri = urldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 
+
+// Map clean URLs to PHP files
+$routes = [
+    '/' => 'index.php',
+    '/about' => 'about.php',
+    '/services' => 'services.php',
+    '/portfolio' => 'portfolio.php',
+    '/blog' => 'blog.php',
+    '/contact' => 'contact.php',
+    '/career' => 'career.php',
+    '/sitemap' => 'sitemap.php',
+    '/sitemap.xml' => 'sitemap.php',
+    '/faq' => 'faq.php',
+    '/faq/' => 'faq.php',
+];
+
+// Check for exact route match
+if (isset($routes[$uri])) {
+    include __DIR__ . '/' . $routes[$uri];
+    return true;
+}
+
 // If the request is for an existing file or directory, serve it directly
 if ($uri !== '/' && file_exists(__DIR__ . $uri)) {
     // Check if it's a PHP file that should be executed
@@ -60,25 +82,6 @@ if (preg_match('#^/admin/?(.*)$#', $uri, $matches)) {
     // 404 for admin
     http_response_code(404);
     include __DIR__ . '/404.php';
-    return true;
-}
-
-// Map clean URLs to PHP files
-$routes = [
-    '/' => 'index.php',
-    '/about' => 'about.php',
-    '/services' => 'services.php',
-    '/portfolio' => 'portfolio.php',
-    '/blog' => 'blog.php',
-    '/contact' => 'contact.php',
-    '/career' => 'career.php',
-    '/sitemap' => 'sitemap.php',
-    '/sitemap.xml' => 'sitemap.php',
-];
-
-// Check for exact route match
-if (isset($routes[$uri])) {
-    include __DIR__ . '/' . $routes[$uri];
     return true;
 }
 

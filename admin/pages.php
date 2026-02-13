@@ -28,6 +28,7 @@ if (Security::isPost()) {
             'meta_title' => Security::clean($_POST['meta_title'] ?? ''),
             'meta_description' => Security::clean($_POST['meta_description'] ?? ''),
             'meta_keywords' => Security::clean($_POST['meta_keywords'] ?? ''),
+            'custom_script' => $_POST['custom_script'] ?? '',
         ];
         
         if (empty($data['slug'])) {
@@ -163,6 +164,11 @@ if ($action === 'edit' && $id > 0) {
             <a href="?action=list"><i class="fas fa-arrow-left"></i> Back to Pages</a>
         </p>
     </div>
+    <?php if ($action === 'edit' && !empty($page['slug'])): ?>
+    <a href="<?= e(SITE_URL . '/' . $page['slug']) ?>" target="_blank" class="btn btn-primary" style="background: transparent; color: var(--color-primary); border: 1px solid var(--color-primary);">
+        <i class="fas fa-external-link-alt"></i> View Page
+    </a>
+    <?php endif; ?>
 </div>
 
 <?php if ($error): ?>
@@ -242,11 +248,23 @@ if ($action === 'edit' && $id > 0) {
                         </select>
                     </div>
                     
-                    </div>
-                    
                     <button type="submit" class="btn btn-primary" style="width: 100%;">
                         <i class="fas fa-save"></i> <?= $action === 'edit' ? 'Update' : 'Save' ?> Page
                     </button>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 24px;">
+                <div class="card-header">
+                    <h3 class="card-title">Custom Scripts</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="custom_script" class="form-label">Body Script (Before &lt;/body&gt;)</label>
+                        <textarea name="custom_script" id="custom_script" class="form-control" 
+                                  rows="6" style="font-family: monospace; font-size: 12px;"><?= e($page['custom_script'] ?? '') ?></textarea>
+                        <p class="form-text">Add tracking codes or custom JS here.</p>
+                    </div>
                 </div>
             </div>
         </div>
