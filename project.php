@@ -189,7 +189,7 @@ require_once INCLUDES_PATH . '/header.php';
         grid-template-columns: 1fr !important;
     }
     aside {
-        order: -1;
+        /* order: -1; Removed to keep sidebar at bottom */
     }
     aside > div {
         position: static !important;
