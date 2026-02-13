@@ -20,49 +20,90 @@ if (Security::isPost()) {
     if (!Security::validateCSRFToken($token)) {
         $error = 'Invalid form submission.';
     } else {
-        // Collect settings based on all tabs
-        $settings = [
-            // General
-            'site_name' => Security::clean($_POST['site_name'] ?? ''),
-            'site_tagline' => Security::clean($_POST['site_tagline'] ?? ''),
-            'site_description' => Security::clean($_POST['site_description'] ?? ''),
+        $activeTab = $_POST['active_tab'] ?? 'general';
+        $settings = [];
+
+        if ($activeTab === 'general') {
+            $settings = [
+                'site_name' => Security::clean($_POST['site_name'] ?? ''),
+                'site_tagline' => Security::clean($_POST['site_tagline'] ?? ''),
+                'site_description' => Security::clean($_POST['site_description'] ?? ''),
+                'contact_email' => Security::clean($_POST['contact_email'] ?? ''),
+                'contact_phone' => Security::clean($_POST['contact_phone'] ?? ''),
+                'whatsapp_number' => Security::clean($_POST['whatsapp_number'] ?? ''),
+                'address' => Security::clean($_POST['address'] ?? ''),
+                'facebook_url' => Security::clean($_POST['facebook_url'] ?? ''),
+                'twitter_url' => Security::clean($_POST['twitter_url'] ?? ''),
+                'linkedin_url' => Security::clean($_POST['linkedin_url'] ?? ''),
+                'instagram_url' => Security::clean($_POST['instagram_url'] ?? ''),
+                'youtube_url' => Security::clean($_POST['youtube_url'] ?? ''),
+            ];
+
+
+            // Handle logo upload
+            if (!empty($_FILES['logo']['name'])) {
+                $uploader = new FileUpload();
+                $uploadedPath = $uploader->uploadImage($_FILES['logo'], 'logo');
+                
+                if ($uploadedPath) {
+                    $existing = $db->fetchOne("SELECT id FROM settings WHERE setting_key = 'logo_path'");
+                    if ($existing) {
+                        $db->update('settings', ['setting_value' => $uploadedPath], 'id = ?', [$existing['id']]);
+                    } else {
+                        $db->insert('settings', ['setting_key' => 'logo_path', 'setting_value' => $uploadedPath]);
+                    }
+                } else {
+                    $error = 'Logo upload failed: ' . implode(' ', $uploader->getErrors());
+                }
+            }
+
+            // Handle white logo upload
+            if (!empty($_FILES['logo_white']['name'])) {
+                $uploader = new FileUpload();
+                $uploadedPath = $uploader->uploadImage($_FILES['logo_white'], 'logo-white');
+                
+                if ($uploadedPath) {
+                    $existing = $db->fetchOne("SELECT id FROM settings WHERE setting_key = 'logo_white_path'");
+                    if ($existing) {
+                        $db->update('settings', ['setting_value' => $uploadedPath], 'id = ?', [$existing['id']]);
+                    } else {
+                        $db->insert('settings', ['setting_key' => 'logo_white_path', 'setting_value' => $uploadedPath]);
+                    }
+                } else {
+                    $error = ($error ? $error . ' ' : '') . 'White Logo upload failed: ' . implode(' ', $uploader->getErrors());
+                }
+            }
+
+
+        } elseif ($activeTab === 'integrations') {
+            $settings = [
+                'google_analytics' => Security::clean($_POST['google_analytics'] ?? ''),
+                'recaptcha_site_key' => Security::clean($_POST['recaptcha_site_key'] ?? ''),
+                'recaptcha_secret_key' => Security::clean($_POST['recaptcha_secret_key'] ?? ''),
+                'custom_css' => $_POST['custom_css'] ?? '',
+                'custom_js_head' => $_POST['custom_js_head'] ?? '',
+                'custom_js_body' => $_POST['custom_js_body'] ?? '',
+            ];
+
+        } elseif ($activeTab === 'advanced') {
+            $settings = [
+                'footer_text' => Security::clean($_POST['footer_text'] ?? ''),
+            ];
+
+        } elseif ($activeTab === 'smtp') {
+            $settings = [
+                'smtp_host' => Security::clean($_POST['smtp_host'] ?? ''),
+                'smtp_port' => Security::clean($_POST['smtp_port'] ?? '587'),
+                'smtp_user' => Security::clean($_POST['smtp_user'] ?? ''),
+                'smtp_encryption' => Security::clean($_POST['smtp_encryption'] ?? 'tls'),
+                'smtp_from_email' => Security::clean($_POST['smtp_from_email'] ?? ''),
+                'smtp_from_name' => Security::clean($_POST['smtp_from_name'] ?? ''),
+            ];
             
-            // Contact
-            'contact_email' => Security::clean($_POST['contact_email'] ?? ''),
-            'contact_phone' => Security::clean($_POST['contact_phone'] ?? ''),
-            'whatsapp_number' => Security::clean($_POST['whatsapp_number'] ?? ''),
-            'address' => Security::clean($_POST['address'] ?? ''),
-            
-            // Social
-            'facebook_url' => Security::clean($_POST['facebook_url'] ?? ''),
-            'twitter_url' => Security::clean($_POST['twitter_url'] ?? ''),
-            'linkedin_url' => Security::clean($_POST['linkedin_url'] ?? ''),
-            'instagram_url' => Security::clean($_POST['instagram_url'] ?? ''),
-            'youtube_url' => Security::clean($_POST['youtube_url'] ?? ''),
-            
-            // Advanced
-            'footer_text' => Security::clean($_POST['footer_text'] ?? ''),
-            
-            // Integrations
-            'google_analytics' => Security::clean($_POST['google_analytics'] ?? ''),
-            'recaptcha_site_key' => Security::clean($_POST['recaptcha_site_key'] ?? ''),
-            'recaptcha_secret_key' => Security::clean($_POST['recaptcha_secret_key'] ?? ''),
-            'custom_css' => $_POST['custom_css'] ?? '', // Permissive for CSS
-            'custom_js_head' => $_POST['custom_js_head'] ?? '', // Permissive for JS
-            'custom_js_body' => $_POST['custom_js_body'] ?? '', // Permissive for JS
-            
-            // SMTP Settings
-            'smtp_host' => Security::clean($_POST['smtp_host'] ?? ''),
-            'smtp_port' => Security::clean($_POST['smtp_port'] ?? '587'),
-            'smtp_user' => Security::clean($_POST['smtp_user'] ?? ''),
-            'smtp_encryption' => Security::clean($_POST['smtp_encryption'] ?? 'tls'),
-            'smtp_from_email' => Security::clean($_POST['smtp_from_email'] ?? ''),
-            'smtp_from_name' => Security::clean($_POST['smtp_from_name'] ?? ''),
-        ];
-        
-        // Only update password if provided
-        if (!empty($_POST['smtp_pass'])) {
-            $settings['smtp_pass'] = $_POST['smtp_pass'];
+            // Only update password if provided
+            if (!empty($_POST['smtp_pass'])) {
+                $settings['smtp_pass'] = $_POST['smtp_pass'];
+            }
         }
         
         foreach ($settings as $key => $value) {
@@ -74,25 +115,9 @@ if (Security::isPost()) {
             }
         }
         
-        // Handle logo upload
-        if (!empty($_FILES['logo']['name'])) {
-            $uploader = new FileUpload();
-            // Assuming 'logo' directory inside uploads
-            $uploadedPath = $uploader->uploadImage($_FILES['logo'], 'logo');
-            
-            if ($uploadedPath) {
-                $existing = $db->fetchOne("SELECT id FROM settings WHERE setting_key = 'logo_path'");
-                if ($existing) {
-                    $db->update('settings', ['setting_value' => $uploadedPath], 'id = ?', [$existing['id']]);
-                } else {
-                    $db->insert('settings', ['setting_key' => 'logo_path', 'setting_value' => $uploadedPath]);
-                }
-            } else {
-                $error = 'Logo upload failed: ' . implode(' ', $uploader->getErrors());
-            }
+        if (empty($error)) {
+            $message = 'Settings saved successfully.';
         }
-        
-        $message = 'Settings saved successfully.';
         
         // redirect to keep tab active
         if (isset($_POST['active_tab'])) {
@@ -446,18 +471,36 @@ foreach ($rows as $row) {
             <?php if ($tab === 'general'): ?>
             <div class="card" style="margin-top: 24px;">
                 <div class="card-header">
-                    <h3 class="card-title">Site Logo</h3>
+                    <h3 class="card-title">Site Branding</h3>
                 </div>
                 <div class="card-body">
                     <div class="form-group">
+                        <label for="logo" class="form-label">Primary Logo (Color/Dark)</label>
                         <input type="file" name="logo" id="logo" class="form-control" 
                                accept="image/*" data-preview="logo-preview">
                         <?php if (!empty($settings['logo_path'])): ?>
                         <img src="<?= e(SITE_URL . $settings['logo_path']) ?>" id="logo-preview" 
-                             style="margin-top: 12px; max-width: 100%; border-radius: 8px;">
+                             style="margin-top: 12px; max-width: 200px; border-radius: 8px; border: 1px solid #eee; padding: 5px;">
                         <?php else: ?>
-                        <img id="logo-preview" style="margin-top: 12px; max-width: 100%; border-radius: 8px; display: none;">
+                        <img id="logo-preview" style="margin-top: 12px; max-width: 200px; border-radius: 8px; display: none;">
                         <?php endif; ?>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 20px; border-top: 1px dashed #eee; padding-top: 20px;">
+                        <label for="logo_white" class="form-label">White Logo (For Dark Backgrounds)</label>
+                        <input type="file" name="logo_white" id="logo_white" class="form-control" 
+                               accept="image/*" data-preview="logo-white-preview">
+                        <?php if (!empty($settings['logo_white_path'])): ?>
+                        <div style="background: #333; padding: 10px; margin-top: 12px; border-radius: 8px; display: inline-block;">
+                            <img src="<?= e(SITE_URL . $settings['logo_white_path']) ?>" id="logo-white-preview" 
+                                 style="max-width: 200px; display: block;">
+                        </div>
+                        <?php else: ?>
+                        <div id="logo-white-wrapper" style="background: #333; padding: 10px; margin-top: 12px; border-radius: 8px; display: none;">
+                            <img id="logo-white-preview" style="max-width: 200px; display: block;">
+                        </div>
+                        <?php endif; ?>
+                        <p class="form-text">Upload a white version of your logo for the footer and dark sections.</p>
                     </div>
                 </div>
             </div>

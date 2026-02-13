@@ -1,27 +1,24 @@
 <?php
-$pageTitle = 'Subscribers';
-require_once __DIR__ . '/includes/header.php';
-
-$db = Database::getInstance();
-
-// Handle Delete
-if (isset($_POST['delete_id'])) {
-    if (!Security::validateCSRFToken($_POST['csrf_token'] ?? '')) {
-         $error = 'Invalid token.';
-    } else {
-        $db->delete('subscribers', 'id = ?', [$_POST['delete_id']]);
-        $message = 'Subscriber deleted successfully.';
-    }
-}
-
-// Handle Export
+// Handle Export BEFORE any output
 if (isset($_GET['export'])) {
+    // Include configuration and database connection
+    // We point to the main includes directory based on current file location
+    require_once __DIR__ . '/../includes/config.php';
+    
+    // Ensure user is logged in
+    Auth::requireLogin();
+    
+    $db = Database::getInstance();
+    
+    // Clean buffer to ensure no whitespace/HTML is sent
     if (ob_get_level()) ob_end_clean();
     
     $rows = $db->fetchAll("SELECT email, status, created_at FROM subscribers ORDER BY created_at DESC");
     
     header('Content-Type: text/csv');
     header('Content-Disposition: attachment; filename="subscribers_' . date('Y-m-d') . '.csv"');
+    header('Pragma: no-cache');
+    header('Expires: 0');
     
     $output = fopen('php://output', 'w');
     fputcsv($output, ['Email', 'Status', 'Date']);
@@ -36,6 +33,21 @@ if (isset($_GET['export'])) {
     
     fclose($output);
     exit;
+}
+
+$pageTitle = 'Subscribers';
+require_once __DIR__ . '/includes/header.php';
+
+$db = Database::getInstance();
+
+// Handle Delete
+if (isset($_POST['delete_id'])) {
+    if (!Security::validateCSRFToken($_POST['csrf_token'] ?? '')) {
+         $error = 'Invalid token.';
+    } else {
+        $db->delete('subscribers', 'id = ?', [$_POST['delete_id']]);
+        $message = 'Subscriber deleted successfully.';
+    }
 }
 
 // Pagination and Search

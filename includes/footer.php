@@ -24,25 +24,53 @@
         <div class="footer-main">
             <div class="container">
                 <div class="footer-grid-new">
-                    <!-- Col 1: Information -->
+                    <!-- Col 1: Branding and Description -->
                     <div class="footer-col-new">
-                        <h4>Information</h4>
-                        <ul class="footer-links-new">
-                            <li><a href="<?= e(SITE_URL) ?>/about">Our Company</a></li>
-                            <li><a href="<?= e(SITE_URL) ?>/services">Services</a></li>
-                            <li><a href="<?= e(SITE_URL) ?>/portfolio">Portfolio</a></li>
-                            <li><a href="<?= e(SITE_URL) ?>/contact">Contact Us</a></li>
-                            <li><a href="<?= e(SITE_URL) ?>/blog">Blog</a></li>
-                        </ul>
+                        <div class="footer-branding">
+                            <a href="<?= e(SITE_URL) ?>" class="footer-logo">
+                                <?php if ($whiteLogo = getSetting('logo_white_path')): ?>
+                                <img src="<?= e(SITE_URL . $whiteLogo) ?>" alt="<?= e(getSetting('site_name')) ?>" class="footer-logo-img">
+                                <?php else: ?>
+                                <h3 class="footer-logo-text"><?= e(getSetting('site_name', 'Evolvcode')) ?></h3>
+                                <?php endif; ?>
+                            </a>
+                            <p class="footer-description">
+                                <?= e(getSetting('site_description', 'Building digital experiences that matter. We help businesses grow through innovative web solutions and strategic design.')) ?>
+                            </p>
+                            
+                            <div class="footer-social">
+                                <?php if ($fb = getSetting('facebook_url')): ?>
+                                <a href="<?= e($fb) ?>" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                                <?php endif; ?>
+                                
+                                <?php if ($tw = getSetting('twitter_url')): ?>
+                                <a href="<?= e($tw) ?>" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                                <?php endif; ?>
+                                
+                                <?php if ($li = getSetting('linkedin_url')): ?>
+                                <a href="<?= e($li) ?>" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                                <?php endif; ?>
+                                
+                                <?php if ($ig = getSetting('instagram_url')): ?>
+                                <a href="<?= e($ig) ?>" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                                <?php endif; ?>
+                                
+                                <?php if ($yt = getSetting('youtube_url')): ?>
+                                <a href="<?= e($yt) ?>" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                                <?php endif; ?>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Col 2: Services (Dynamic) -->
+                    <!-- Col 2: Legal (Pages from Backend) -->
                     <div class="footer-col-new">
-                        <h4>Services</h4>
+                        <h4>Legal</h4>
                         <ul class="footer-links-new">
-                            <?php foreach (getServices(5) as $service): ?>
-                            <li><a href="<?= e(SITE_URL) ?>/service/<?= e($service['slug']) ?>"><?= e($service['title']) ?></a></li>
-                            <?php endforeach; ?>
+                            <li><a href="<?= e(SITE_URL) ?>/privacy-policy">Privacy Policy</a></li>
+                            <li><a href="<?= e(SITE_URL) ?>/disclaimer">Disclaimer</a></li>
+                            <li><a href="<?= e(SITE_URL) ?>/cookies-policy">Cookies Policy</a></li>
+                            <li><a href="<?= e(SITE_URL) ?>/terms-and-conditions">Terms & Conditions</a></li>
+                            <li><a href="<?= e(SITE_URL) ?>/refund-policy">Refund Policy</a></li>
                         </ul>
                     </div>
 
@@ -64,18 +92,30 @@
                     <!-- Col 4: Contact/Branding -->
                      <div class="footer-col-new">
                         <h4>Contact</h4>
-                        <ul class="footer-links-new">
+                        <ul class="footer-contact-list">
                             <li>
-                                <a href="#"><?= e(getSetting('address', 'Patna, Bihar, India')) ?></a>
+                                <a href="#">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span><?= e(getSetting('address', 'Patna, Bihar, India')) ?></span>
+                                </a>
                             </li>
                             <li>
-                                <a href="tel:<?= e(getSetting('contact_phone')) ?>"><?= e(getSetting('contact_phone')) ?></a>
+                                <a href="tel:<?= e(getSetting('contact_phone')) ?>">
+                                    <i class="fas fa-phone-alt"></i>
+                                    <span><?= e(getSetting('contact_phone')) ?></span>
+                                </a>
                             </li>
                             <li>
-                                <a href="mailto:<?= e(getSetting('contact_email')) ?>"><?= e(getSetting('contact_email')) ?></a>
+                                <a href="mailto:<?= e(getSetting('contact_email')) ?>">
+                                    <i class="fas fa-envelope"></i>
+                                    <span><?= e(getSetting('contact_email')) ?></span>
+                                </a>
                             </li>
                              <li>
-                                <a href="https://api.whatsapp.com/send/?phone=<?= e(getSetting('whatsapp_number')) ?>" target="_blank">Chat on WhatsApp</a>
+                                <a href="https://api.whatsapp.com/send/?phone=<?= e(getSetting('whatsapp_number')) ?>" target="_blank">
+                                    <i class="fab fa-whatsapp"></i>
+                                    <span>Chat on WhatsApp</span>
+                                </a>
                             </li>
                         </ul>
                     </div>

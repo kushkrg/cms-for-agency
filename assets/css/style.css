@@ -2301,8 +2301,40 @@ textarea.form-control {
 
 .footer-grid-new {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
     gap: 40px;
+}
+
+.footer-branding {
+    margin-bottom: 20px;
+}
+
+.footer-logo {
+    display: inline-block;
+    margin-bottom: 20px;
+    text-decoration: none;
+}
+
+.footer-logo-img {
+    max-height: 40px;
+    width: auto;
+    object-fit: contain;
+}
+
+.footer-logo-text {
+    color: #fff;
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.footer-description {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    max-width: 100%;
 }
 
 .footer-col-new h4 {
@@ -2361,6 +2393,44 @@ textarea.form-control {
 
 .footer-links-new a:hover::before {
     color: #fff;
+}
+
+/* Contact List */
+.footer-contact-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-contact-list li {
+    margin-bottom: 15px;
+}
+
+.footer-contact-list a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: flex-start;
+    font-size: 0.9rem;
+    gap: 12px;
+}
+
+.footer-contact-list a:hover {
+    color: #fff;
+    padding-left: 5px;
+}
+
+.footer-contact-list i {
+    color: #fff;
+    font-size: 1rem;
+    margin-top: 3px;
+    width: 20px;
+    text-align: center;
+}
+
+.footer-contact-list span {
+    flex: 1;
 }
 
 /* Bottom Bar */
